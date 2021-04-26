@@ -84,7 +84,7 @@
     <hr>
 
     <?php
-    //strtolower()、strtoupper() 轉換英文小寫
+    // strtolower()、strtoupper() 轉換英文小寫
     $str07_1 = "HELLO ";
     $str07_2 = "world!";
     echo strtolower($str07_1) . strtoupper($str07_2);
@@ -93,7 +93,7 @@
     <hr>
 
     <?php
-    //md5() 使用 MD5 計算字串雜湊值，並回傳。預設 32 個字元長度的字串。
+    // md5() 使用 MD5 計算字串雜湊值，並回傳。預設 32 個字元長度的字串。
     $strOrigin = "T1st@localhost";
     echo "原始資料: " . $strOrigin . "<br>";
     echo "md5() 加密後: " . md5($strOrigin) . "<br>";
@@ -110,7 +110,7 @@
     <hr>
 
     <?php
-    //sha1() 使用 sha1 計算字串雜湊值，並回傳。預設 40 個字元長度的字串。破解難度更高
+    // sha1() 使用 sha1 計算字串雜湊值，並回傳。預設 40 個字元長度的字串。破解難度更高
     $strOrigin = "T1st@localhost";
     echo "原始資料: " . $strOrigin . "<br>";
     echo "sha1() 加密後: " . sha1($strOrigin) . "<br>";

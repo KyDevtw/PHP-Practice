@@ -31,9 +31,9 @@
         <!-- 動態生成tbody -->
         <tbody>
             <?php
-            //學生姓名陣列初始化
+            // 學生姓名陣列初始化
             $arrStudent = ["Alex", "Bill", "Carl", "Darren"];
-            //count() 已函式計算陣列的長度
+            // count() 已函式計算陣列的長度
             for ($i = 0; $i < count($arrStudent); $i++) {
                 echo "<tr><td>" . $arrStudent[$i] . "</td></tr>";
             }
