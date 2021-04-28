@@ -2,16 +2,16 @@
 require_once('./checkSession.php'); //引入判斷是否登入機制
 require_once('./db.inc.php'); //引用資料庫連線
 
-//SQL 敘述: 取得 students 資料表總筆數
+// SQL 敘述: 取得 students 資料表總筆數
 $sqlTotal = "SELECT count(1) AS `count` FROM `students`";
 
-//執行 SQL 語法，並回傳、建立 PDOstatment 物件
+// 執行 SQL 語法，並回傳、建立 PDOstatment 物件
 $stmtTotal = $pdo->query($sqlTotal);
 
-//查詢結果，取得第一筆資料(索引為 0)
+// 查詢結果，取得第一筆資料(索引為 0)
 $arrTotal = $stmtTotal->fetchAll()[0];
 
-//資料表總筆數
+// 資料表總筆數
 $total = $arrTotal['count'];
 
 /**
@@ -25,10 +25,10 @@ $numPerPage = 5;
 // 總頁數，ceil()為無條件進位
 $totalPages = ceil($total/$numPerPage); 
 
-//目前第幾頁
+// 目前第幾頁
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
-//若 page 小於 1，則回傳 1
+// 若 page 小於 1，則回傳 1
 $page = $page < 1 ? 1 : $page;
 ?>
 <!DOCTYPYE html>
@@ -65,24 +65,24 @@ $page = $page < 1 ? 1 : $page;
         </thead>
         <tbody>
         <?php
-        //SQL 敘述
+        // SQL 敘述
         $sql = "SELECT `id`, `studentId`, `studentName`, `studentGender`, `studentBirthday`, 
                         `studentPhoneNumber`, `studentDescription`, `studentImg`
                 FROM `students` 
                 ORDER BY `id` ASC 
                 LIMIT ?, ? ";
 
-        //設定繫結值
+        // 設定繫結值
         $arrParam = [
             ($page - 1) * $numPerPage, 
             $numPerPage
         ];
 
-        //查詢分頁後的學生資料
+        // 查詢分頁後的學生資料
         $stmt = $pdo->prepare($sql);
         $stmt->execute($arrParam);
 
-        //資料數量大於 0，則列出所有資料
+        // 資料數量大於 0，則列出所有資料
         if($stmt->rowCount() > 0) {
             $arr = $stmt->fetchAll();
             for($i = 0; $i < count($arr); $i++) {
