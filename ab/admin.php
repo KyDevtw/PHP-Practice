@@ -54,7 +54,10 @@ $page = $page < 1 ? 1 : $page;
 </head>
 
 <body>
-    這裡是後端管理頁面 - <a href="./admin.php">通訊錄全覽</a> | <a href="./new.php">新增頁面</a> | <a href="./logout.php?logout=1">登出</a>
+    
+    <?php
+    require_once './title.php';
+    ?>
 
     <table class="border">
         <thead>
@@ -105,10 +108,12 @@ $page = $page < 1 ? 1 : $page;
                         <td class="border2"><?php echo nl2br($arr[$i]['studentDescription']) ?></td>
                         <td class="border2">
                             <?php if ($arr[$i]['studentImg'] !== NULL) { ?>
+                                <!-- 透過php把圖片連結寫入 -->
                                 <img class="w200px" src="./files/<?php echo $arr[$i]['studentImg'] ?>">
                             <?php } ?>
                         </td>
                         <td class="border2">
+                            <!-- 透過超連結執行php把id帶入 -->
                             <a href="./edit.php?id=<?php echo $arr[$i]['id']; ?>">編輯</a>
                             <a href="./delete.php?id=<?php echo $arr[$i]['id']; ?>">刪除</a>
                         </td>

@@ -20,7 +20,7 @@ if (isset($_POST['username']) && isset($_POST['pwd'])) {
 
     // $pdo_stmt 存放資料細節
     // ->是php的物件導向(使用物件的方法)近似於JS的'.'
-    $pdo_stmt = $pdo->prepare($sql); // prepare 新增跳脫字元讓之後程式判讀特殊字元為字串
+    $pdo_stmt = $pdo ->prepare($sql); // prepare 新增跳脫字元讓之後程式判讀特殊字元為字串
     $pdo_stmt->execute($arrParam); // execute 執行前面prepare模擬好的狀態
 
     if ($pdo_stmt->rowCount() > 0) {
