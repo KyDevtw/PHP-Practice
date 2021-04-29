@@ -3,6 +3,7 @@
 session_start();
 
 // 引用資料庫連線
+// require_once會讀取或跳轉到括弧內網址一次,也可以寫成 require_once './db.inc.php'
 require_once('./db.inc.php');
 
 if (isset($_POST['username']) && isset($_POST['pwd'])) {
@@ -28,13 +29,15 @@ if (isset($_POST['username']) && isset($_POST['pwd'])) {
 
         // 3秒後跳頁
         header("Refresh: 1; url=./admin.php");
-        echo "登入成功!!! 1秒後自動進入後端頁面";
+        // echo "登入成功!!! 1秒後自動進入後端頁面";
+        require_once('templates/login_success.html');
     } else {
         // 關閉session
         session_destroy();
 
         header("Refresh: 3; url=./index.php");
-        echo "登入失敗…3秒後自動回登入頁";
+        // echo "登入失敗…3秒後自動回登入頁";
+        require_once('templates/login_failed.html');
     }
 } else {
     // 關閉session

@@ -9,5 +9,6 @@ if( !isset($_SESSION['username']) ) {
     //3 秒後跳頁
     header("Refresh: 3; url=./index.php");
     echo "請確實登入…3秒後自動回登入頁";
+    // 沒下exit會一直往下執行程式
     exit();
 }
