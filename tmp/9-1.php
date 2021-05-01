@@ -21,7 +21,7 @@ setcookie($cookie_name, $cookie_value, time() + (86400 * 15), "/");
 // 如果 cookie 不存在，則顯示尚未設定
 if(!isset($_COOKIE[$cookie_name])) {
 echo "Cookie '{$cookie_name}' 還沒有設定…";
-} else { // 若是設定，則顯示 cookie 內容
+} else { // 若是已設定，則顯示 cookie 內容
 echo "Cookie '{$cookie_name}' 已經設定。<br>";
 echo "Cookie '{$cookie_name}' 的值是: {$_COOKIE[$cookie_name]}";
 }
