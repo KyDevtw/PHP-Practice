@@ -54,94 +54,96 @@ $page = $page < 1 ? 1 : $page;
 </head>
 
 <body>
-    
+
     <?php
     require_once './title.php';
     ?>
+    <form name="myForm" method="POST" action="deleteIds.php">
+        <table class="border">
+            <thead>
+                <tr>
+                    <th class="border2">勾選</th>
+                    <th class="border2">學號</th>
+                    <th class="border2">學生</th>
+                    <th class="border2">性別</th>
+                    <th class="border2">生日</th>
+                    <th class="border2">手機</th>
+                    <th class="border2">個人描述</th>
+                    <th class="border2">照片</th>
+                    <th class="border2">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                // SQL 敘述
+                $sql = "SELECT `id`, `studentId`, `studentName`, `studentGender`, `studentBirthday`, `studentPhoneNumber`, `studentDescription`, `studentImg`
+                    FROM `students` 
+                    ORDER BY `id` ASC 
+                    LIMIT ?, ? "; // 從第幾個到第幾個
 
-    <table class="border">
-        <thead>
-            <tr>
-                <th class="border2">勾選</th>
-                <th class="border2">學號</th>
-                <th class="border2">學生</th>
-                <th class="border2">性別</th>
-                <th class="border2">生日</th>
-                <th class="border2">手機</th>
-                <th class="border2">個人描述</th>
-                <th class="border2">照片</th>
-                <th class="border2">操作</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            // SQL 敘述
-            $sql = "SELECT `id`, `studentId`, `studentName`, `studentGender`, `studentBirthday`, `studentPhoneNumber`, `studentDescription`, `studentImg`
-                FROM `students` 
-                ORDER BY `id` ASC 
-                LIMIT ?, ? "; // 從第幾個到第幾個
+                // 設定繫結值
+                $arrParam = [
+                    ($page - 1) * $numPerPage,
+                    $numPerPage
+                ];
 
-            // 設定繫結值
-            $arrParam = [
-                ($page - 1) * $numPerPage,
-                $numPerPage
-            ];
+                // 查詢分頁後的學生資料
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute($arrParam);
 
-            // 查詢分頁後的學生資料
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute($arrParam);
-
-            // 資料數量大於 0，則列出所有資料
-            if ($stmt->rowCount() > 0) {
-                $arr = $stmt->fetchAll(); // 把資料抓出來形成陣列,跑for迴圈建立html
-                for ($i = 0; $i < count($arr); $i++) {
-            ?>
+                // 資料數量大於 0，則列出所有資料
+                if ($stmt->rowCount() > 0) {
+                    $arr = $stmt->fetchAll(); // 把資料抓出來形成陣列,跑for迴圈建立html
+                    for ($i = 0; $i < count($arr); $i++) {
+                ?>
+                        <tr>
+                            <td class="border2">
+                                <input type="checkbox" name="chk[]" value="<?php echo $arr[$i]['id'] ?>" />
+                            </td>
+                            <td class="border2"><?php echo $arr[$i]['studentId'] ?></td>
+                            <td class="border2"><?php echo $arr[$i]['studentName'] ?></td>
+                            <td class="border2"><?php echo $arr[$i]['studentGender'] ?></td>
+                            <td class="border2"><?php echo $arr[$i]['studentBirthday'] ?></td>
+                            <td class="border2"><?php echo $arr[$i]['studentPhoneNumber'] ?></td>
+                            <!-- nl2b會使資料庫內文字有斷行的斷行 -->
+                            <td class="border2"><?php echo nl2br($arr[$i]['studentDescription']) ?></td>
+                            <td class="border2">
+                                <?php if ($arr[$i]['studentImg'] !== NULL) { ?>
+                                    <!-- 透過php把圖片連結寫入 -->
+                                    <img class="w200px" src="./files/<?php echo $arr[$i]['studentImg'] ?>">
+                                <?php } ?>
+                            </td>
+                            <td class="border2">
+                                <!-- 透過超連結執行php把id帶入 -->
+                                <a href="./edit.php?id=<?php echo $arr[$i]['id']; ?>">編輯</a>
+                                <a href="./delete.php?id=<?php echo $arr[$i]['id']; ?>">刪除</a>
+                            </td>
+                        </tr>
+                    <?php
+                    }
+                } else {
+                    ?>
                     <tr>
-                        <td class="border2">
-                            <input type="checkbox" name="chk[]" value="<?php echo $arr[$i]['id'] ?>" />
-                        </td>
-                        <td class="border2"><?php echo $arr[$i]['studentId'] ?></td>
-                        <td class="border2"><?php echo $arr[$i]['studentName'] ?></td>
-                        <td class="border2"><?php echo $arr[$i]['studentGender'] ?></td>
-                        <td class="border2"><?php echo $arr[$i]['studentBirthday'] ?></td>
-                        <td class="border2"><?php echo $arr[$i]['studentPhoneNumber'] ?></td>
-                        <td class="border2"><?php echo nl2br($arr[$i]['studentDescription']) ?></td>
-                        <td class="border2">
-                            <?php if ($arr[$i]['studentImg'] !== NULL) { ?>
-                                <!-- 透過php把圖片連結寫入 -->
-                                <img class="w200px" src="./files/<?php echo $arr[$i]['studentImg'] ?>">
-                            <?php } ?>
-                        </td>
-                        <td class="border2">
-                            <!-- 透過超連結執行php把id帶入 -->
-                            <a href="./edit.php?id=<?php echo $arr[$i]['id']; ?>">編輯</a>
-                            <a href="./delete.php?id=<?php echo $arr[$i]['id']; ?>">刪除</a>
-                        </td>
+                        <td class="border" colspan="9">沒有資料</td>
                     </tr>
                 <?php
                 }
-            } else {
                 ?>
+            </tbody>
+            <!-- 生成頁碼選項 -->
+            <tfoot>
                 <tr>
-                    <td class="border" colspan="9">沒有資料</td>
+                    <td class="border" colspan="9">
+                        <?php for ($i = 1; $i <= $totalPages; $i++) { ?>
+                            <!-- ?page是在網址page後生成page,可以用自己想要的字母 -->
+                            <a href="?page=<?php echo $i ?>"> <?php echo $i ?> </a>
+                        <?php } ?>
+                    </td>
                 </tr>
-            <?php
-            }
-            ?>
-        </tbody>
-        <!-- 生成頁碼選項 -->
-        <tfoot>
-            <tr>
-                <td class="border" colspan="9">
-                    <?php for ($i = 1; $i <= $totalPages; $i++) { ?>
-                        <!-- ?page是在網址page後生成page,可以用自己想要的字母 -->
-                        <a href="?page=<?php echo $i ?>"> <?php echo $i ?> </a>
-                    <?php } ?>
-                </td>
-            </tr>
-        </tfoot>
-    </table>
-
+            </tfoot>
+        </table>
+        <input type="submit" name="smb" value="刪除">
+    </form>
 </body>
 
 </html>
