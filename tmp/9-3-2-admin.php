@@ -15,6 +15,7 @@ if (!isset($_SESSION['username'])) {
 }
 ?>
 
+session_destroy(); // 刪除伺服器上的session,下次存取網頁session就會消失,刪除的當下還是可以使用session_destroy(); // 刪除伺服器上的session,下次存取網頁session就會消失,刪除的當下還是可以使用
 
 <!DOCTYPE html>
 <html lang="en">

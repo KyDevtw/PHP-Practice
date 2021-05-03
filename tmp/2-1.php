@@ -1,6 +1,6 @@
 <?php
 
-// 變數命名可以在開頭加上資料類型,使用小駝峰命呒˙ㄥˊ
+// 變數命名可以在開頭加上資料類型,使用小駝峰命名
 // 字串變數
 $strName = "Alex";
 
@@ -14,7 +14,7 @@ echo $strName." 開了 ".$intStores." 間店。";
 $floatNumber = 3.1415926;
 
 // 「.」與變數、資料之間，也可以用空白區隔或排版
-echo $floatNumber . " 是浮點數";
+echo $floatNumber . "是浮點數";
 
 // 可以整合 HTML 標籤
 echo "<br><br>";
