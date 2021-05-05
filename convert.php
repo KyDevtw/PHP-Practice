@@ -2,42 +2,46 @@
 //讀取 composer 所下載的套件
 require_once('vendor/autoload.php');
 
+//資料庫主機設定
+const DRIVER_NAME = "mysql"; //使用哪一家資料庫
+const DB_HOST = "localhost"; //資料庫網路位址 (127.0.0.1)
+const DB_USERNAME = "test"; //資料庫連線帳號
+const DB_PASSWORD = "T1st@localhost"; //資料庫連線密碼
+const DB_NAME = "shopping_cart"; //指定資料庫
+const DB_CHARSET = "utf8mb4"; //指定字元集，亦即是文字的編碼來源
+const DB_COLLATE = "utf8mb4_unicode_ci"; //在字元集之下的排序依據
+
+//資料庫連線變數
+$pdo = null;
+
 //錯誤處理
 try {
-    //資料庫主機設定
-    $db_host = "localhost";
-    $db_username = "test";
-    $db_password = "T1st@localhost";
-    $db_name = "shopping_cart";
-    $db_charset = "utf8mb4";
-    $db_collate = "utf8mb4_unicode_ci";
-
-    //設定 PDO 屬性
+    //設定 PDO 屬性 (Array 型態)
     $options = [
-        PDO::ATTR_EMULATE_PREPARES => PDO::ATTR_EMULATE_PREPARES,
+        PDO::ATTR_EMULATE_PREPARES => false,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES {$db_charset} COLLATE {$db_collate}"
+        PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION,
+        PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' . DB_CHARSET . ' COLLATE ' . DB_COLLATE
     ];
 
     //PDO 連線
-    $pdo = new PDO("mysql:host={$db_host};dbname={$db_name};charset={$db_charset}", $db_username , $db_password, $options);
+    $pdo = new PDO(
+        DRIVER_NAME. ':host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=' .DB_CHARSET, 
+        DB_USERNAME, 
+        DB_PASSWORD, 
+        $options
+    );
 } catch (PDOException $e) {
     echo "資料庫連結失敗，訊息: " . $e->getMessage();
+    exit();
 }
 
-/*
-//官方範例
-//URL: https://phpspreadsheet.readthedocs.io/en/latest/
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-$spreadsheet = new Spreadsheet();
-$sheet = $spreadsheet->getActiveSheet();
-$sheet->setCellValue('A1', 'Hello World !');
-$writer = new Xlsx($spreadsheet);
-$writer->save('hello world.xlsx');
-$cellValue = $spreadsheet->getActiveSheet()->getCell('A1')->getValue();
-echo $cellValue;
-*/
+
+/**
+ * 官方範例
+ * URL: https://phpspreadsheet.readthedocs.io/en/latest/
+ */
+
 
 //你的 excel 檔案路徑 (含檔名)
 $inputFileName = './products.xlsx';
@@ -55,50 +59,24 @@ for($i = 2; $i <= $highestRow; $i++) {
         $spreadsheet->getActiveSheet()->getCell('A'.$i)->getValue() === null ) break;
     
     //讀取 cell 值
-    $courseTerm =                       $spreadsheet->getActiveSheet()->getCell('A'.$i)->getValue();
-    $courseName =                       $spreadsheet->getActiveSheet()->getCell('B'.$i)->getValue();
-    $courseLecturer =                   $spreadsheet->getActiveSheet()->getCell('C'.$i)->getValue();
-    $courseLecturerIntroduction =       $spreadsheet->getActiveSheet()->getCell('D'.$i)->getValue();
-    $coursePlace =                      $spreadsheet->getActiveSheet()->getCell('E'.$i)->getValue();
-    $courseIntroduction =               $spreadsheet->getActiveSheet()->getCell('F'.$i)->getValue();
-    $courseId =                         $spreadsheet->getActiveSheet()->getCell('G'.$i)->getValue();
-    $courseCredit =                     $spreadsheet->getActiveSheet()->getCell('H'.$i)->getValue();
-    $courseClassTime =                  $spreadsheet->getActiveSheet()->getCell('I'.$i)->getValue();
-    $courseCollaborator =               $spreadsheet->getActiveSheet()->getCell('J'.$i)->getValue();
-    $courseCollaboratorCategory =       $spreadsheet->getActiveSheet()->getCell('K'.$i)->getValue();
-    $courseCollaboratorIntroduction =   $spreadsheet->getActiveSheet()->getCell('L'.$i)->getValue();
-    $courseResult =                     $spreadsheet->getActiveSheet()->getCell('M'.$i)->getValue();
-    $courseSDGs =                       $spreadsheet->getActiveSheet()->getCell('N'.$i)->getValue();
-    
-    //預覽可能結果
-    echo "[".$i."] ".$courseTerm." ".$courseName."\n";
+    $itemName =         $spreadsheet->getActiveSheet()->getCell('A'.$i)->getValue();
+    $itemImg =          $spreadsheet->getActiveSheet()->getCell('B'.$i)->getValue();
+    $itemPrice =        $spreadsheet->getActiveSheet()->getCell('C'.$i)->getValue();
+    $itemQty =          $spreadsheet->getActiveSheet()->getCell('D'.$i)->getValue();
+    $itemCategoryId =   $spreadsheet->getActiveSheet()->getCell('E'.$i)->getValue();
     
     //寫入資料
-    $sql = "INSERT INTO `courses` (
-        `courseId`, `courseTerm`, `courseName`, `courseLecturer`, `courseLecturerIntroduction`, 
-        `coursePlace`, `courseIntroduction`, `courseCredit`, `courseClassTime`, `courseCollaborator`, 
-        `courseCollaboratorCategory`, `courseCollaboratorIntroduction`, `courseResult`, `courseSDGs`
-        ) VALUE (
-            ?,?,?,?,?,
-            ?,?,?,?,?,
-            ?,?,?,?
-        )";
+    $sql = "INSERT INTO `items` 
+            (`itemName`,`itemImg`,`itemPrice`,`itemQty`,`itemCategoryId`) 
+            VALUES 
+            (?,?,?,?,?)";
     $stmt = $pdo->prepare($sql);
     $arrParam = [
-        (string)$courseId,
-        (string)$courseTerm,
-        (string)$courseName,
-        (string)$courseLecturer,
-        (string)$courseLecturerIntroduction,
-        (string)$coursePlace,
-        (string)$courseIntroduction,
-        (int)$courseCredit,
-        (string)$courseClassTime,
-        (string)$courseCollaborator,
-        (string)$courseCollaboratorCategory,
-        (string)$courseCollaboratorIntroduction,
-        (string)$courseResult,
-        (string)$courseSDGs,
+        $itemName,
+        $itemImg,
+        $itemPrice,
+        $itemQty,
+        $itemCategoryId
     ];
 
     //繫結資料並執行
@@ -107,7 +85,6 @@ for($i = 2; $i <= $highestRow; $i++) {
     //若是成功寫入資料
     if( $stmt->rowCount() > 0 ){
         //印出 AutoIncrement 的流水號碼 (若沒設定，預設為 0)
-        echo $pdo->lastInsertId();
+        echo $pdo->lastInsertId() . "\n";
     }
 }
-?>
