@@ -135,8 +135,7 @@ require_once('./db.inc.php');
                             </td>
                             <td class="border-0 align-middle">
                                 <?php
-                                $sqlItemList = "SELECT `item_lists`.`checkPrice`,`item_lists`.`checkQty`,`item_lists`.`checkSubtotal`,
-                                                        `items`.`itemName`,`categories`.`categoryName`
+                                $sqlItemList = "SELECT `item_lists`.`checkPrice`,`item_lists`.`checkQty`,`item_lists`.`checkSubtotal`,`items`.`itemName`,`categories`.`categoryName`
                                                 FROM `item_lists` 
                                                 INNER JOIN `items`
                                                 ON `item_lists`.`itemId` = `items`.`itemId`
