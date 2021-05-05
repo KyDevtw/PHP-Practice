@@ -52,7 +52,7 @@ require_once('./templates/tpl-header.php');
                 }
 
 
-                //若商品項目個數大於 0,則列出商品
+                // 若商品項目個數大於 0,則列出商品
                 if ($stmt->rowCount() > 0) {
                     $arr = $stmt->fetchAll();
                     for ($i = 0; $i < count($arr); $i++) {
